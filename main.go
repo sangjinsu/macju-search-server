@@ -11,6 +11,7 @@ import (
 	"log"
 	"os"
 	"runtime"
+	"strings"
 )
 
 func main() {
@@ -22,12 +23,16 @@ func main() {
 		log.Fatal("Error loading .env file")
 	}
 
-	searchTag := searchtag.New().Addresses(os.Getenv("LOCAL_SERVER")).Build()
+	searchTag := searchtag.New().Addresses(os.Getenv("EC2_SERVER")).Build()
 
 	app := fiber.New()
+	allowOrigins := strings.Join([]string{
+		os.Getenv("LOCAL_SERVER"),
+		os.Getenv("EC2_SERVER")},
+		", ")
 
 	app.Use(cors.New(cors.Config{
-		AllowOrigins: "http://127.0.0.1:8082, i6c107.p.ssafy.io",
+		AllowOrigins: allowOrigins,
 		AllowMethods: fiber.MethodGet,
 	}))
 
